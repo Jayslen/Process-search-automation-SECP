@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+body {
+    @apply bg-gray-100;
+    display: grid;
+    height: 100vh;
+    grid-template-columns: 305px 1fr;
+    padding: 20px;
+    gap: 16px;
+}
