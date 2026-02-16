@@ -18,7 +18,14 @@
       }
     ],
     "security": {
-      "csp": null
+      "csp": null,
+      "assetProtocol": {
+        "enable": true,
+        "scope": [
+          "$APPDATA/**",
+          "/home/jayslen/.local/share/com.jayslen.automation-secp/**"
+        ]
+      }
     }
   },
   "bundle": {

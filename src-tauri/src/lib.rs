@@ -7,11 +7,12 @@ fn greet(name: &str) -> String {
 }
 
 #[tauri::command]
-fn scrape() -> Result<String, String> {
+fn scrape(path: &str) -> Result<String, String> {
     let output = Command::new("bun")
         .current_dir("/home/jayslen/Development/SECP-scrape-bidding-processes")
         .arg("run")
         .arg("index.ts")
+        .arg(path)
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .output()
@@ -29,6 +30,7 @@ fn scrape() -> Result<String, String> {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![greet, scrape])
         .run(tauri::generate_context!())
