@@ -11,6 +11,7 @@ export function ScrapeDataForm({
 }: LoginFormProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    onSubmit("username", "password");
   };
 
   return (

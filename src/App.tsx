@@ -11,6 +11,7 @@ import data from "./mocks/data.json";
 
 const mockProcesses: ProcessData[] = data;
 
+console.log(await appDataDir());
 function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [processes, setProcesses] = useState<ProcessData[]>(mockProcesses);
@@ -74,7 +75,9 @@ function App() {
           </header>
           {/* Login Form */}
           <ScrapeDataForm
-            onSubmit={() => console.log("boee")}
+            onSubmit={() => {
+              console.log("Scraping started");
+            }}
             isLoading={isLoading}
           />
           Process Details
