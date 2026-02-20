@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Building2,
   Hash,
@@ -7,24 +8,8 @@ import {
   ImageIcon,
   Star,
 } from "lucide-react";
-import { useState } from "react";
-import { ArticlesView, Direction } from "./ArticlesView";
-
-export interface ProcessData {
-  institution: string;
-  code: string;
-  title: string;
-  pubDate: string | undefined;
-  dueDate: string | undefined;
-  url: string;
-  imagePath: string;
-}
-
-interface ProcessDetailsProps {
-  processes: ProcessData[];
-  markedProcesses: Set<string>;
-  onToggleMark: (process: ProcessData) => void;
-}
+import { ArticlesView } from "./ArticlesView";
+import { Direction, ProcessData, ProcessDetailsProps } from "../types/core";
 
 export function ProcessDetails({
   processes,

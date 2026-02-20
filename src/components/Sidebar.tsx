@@ -1,5 +1,5 @@
 import { Bookmark, Star } from "lucide-react";
-import { ProcessData } from "./ProccessDetails";
+import { ProcessData } from "../types/core";
 
 interface SidebarProps {
   markedProcesses: ProcessData[];

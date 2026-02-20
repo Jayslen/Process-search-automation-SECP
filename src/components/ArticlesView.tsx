@@ -1,11 +1,6 @@
 import { ArrowLeft, ArrowRight, Star, X } from "lucide-react";
-import { ProcessData } from "./ProccessDetails";
 import { convertFileSrc } from "@tauri-apps/api/core";
-
-export enum Direction {
-  "Next",
-  "Previous",
-}
+import { Direction, ProcessData } from "../types/core";
 
 export function ArticlesView({
   process,

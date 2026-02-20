@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { ProcessData } from "../components/ProccessDetails";
 import data from "../mocks/data.json";
+import { ProcessData } from "../types/core";
 
 const mockProcesses: ProcessData[] = data;
 export function useGetProcess() {

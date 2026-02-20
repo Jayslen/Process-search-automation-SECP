@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ProcessData } from "../components/ProccessDetails";
+import { ProcessData } from "../types/core";
 
 export function useToggleMark(processes: ProcessData[]) {
   const [markedProcessCodes, setMarkedProcessCodes] = useState<Set<string>>(
