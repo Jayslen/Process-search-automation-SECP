@@ -5,13 +5,10 @@ import {
   ExternalLink,
   FileText,
   ImageIcon,
-  X,
   Star,
-  ArrowRight,
-  ArrowLeft,
 } from "lucide-react";
 import { useState } from "react";
-import { convertFileSrc } from "@tauri-apps/api/core";
+import { ArticlesView, Direction } from "./ArticlesView";
 
 export interface ProcessData {
   institution: string;
@@ -43,7 +40,32 @@ export function ProcessDetails({
     );
     setcurrentProcessIndex(currentIndex);
   };
-  console.log("currentProcessIndex", currentProcessIndex);
+
+  const handleChangeProcess = (direction: Direction) => {
+    if (direction === Direction.Next) {
+      setcurrentProcessIndex((prevIndex) => {
+        if (prevIndex === null || prevIndex === processes.length - 1) {
+          return 0;
+        }
+        return prevIndex + 1;
+      });
+    } else if (direction === Direction.Previous) {
+      setcurrentProcessIndex((prevIndex) => {
+        if (prevIndex === null || prevIndex === 0) {
+          return processes.length - 1;
+        }
+        return prevIndex - 1;
+      });
+    }
+  };
+
+  const closeView = () => {
+    setcurrentProcessIndex(null);
+  };
+
+  const isProcessMarked = (process: ProcessData) => {
+    return markedProcesses.has(process.code);
+  };
 
   if (processes.length === 0) {
     return (
@@ -127,7 +149,7 @@ export function ProcessDetails({
                 >
                   <Star
                     className={`size-5 ${
-                      markedProcesses.has(process.code)
+                      isProcessMarked(process)
                         ? "fill-yellow-400 text-yellow-400"
                         : "text-slate-500"
                     }`}
@@ -160,56 +182,15 @@ export function ProcessDetails({
         // created image view
       </section>
       {currentProcessIndex !== null && (
-        <div className="w-screen h-screen bg-black/80 absolute top-0 left-0 grid place-items-center">
-          <section className="max-w-6xl  hover:shadow-sm transition-all">
-            <header className="flex items-center justify-between mb-4 bg-slate-900 rounded-md border border-slate-700 p-5">
-              <div className="">
-                <h3
-                  className="text-md font-bold text-white max-w-3xl capitalize
-                  "
-                >
-                  {processes[currentProcessIndex].title.toLocaleLowerCase()}
-                </h3>
-                <span className="text-gray-200 text-base italic">
-                  {currentProcessIndex + 1}/{processes.length}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Star className="size-8 bg-slate-800 hover:bg-slate-700 rounded-md transition-all cursor-pointer p-1 hover:scale-[80%] text-yellow-500" />
-                <ArrowLeft
-                  className="size-8 bg-slate-800 hover:bg-slate-700 text-gray-50 rounded-md transition-all cursor-pointer p-1 hover:scale-[80%]"
-                  onClick={() => {
-                    setcurrentProcessIndex((prev) => {
-                      if (prev === null) return 0;
-                      return prev === 0 ? processes.length - 1 : prev - 1;
-                    });
-                  }}
-                />
-                <ArrowRight
-                  className="size-8 bg-slate-800 hover:bg-slate-700 text-gray-50 rounded-md transition-all cursor-pointer p-1 hover:scale-[80%]"
-                  onClick={() => {
-                    setcurrentProcessIndex((prev) => {
-                      if (prev === null) return 0;
-                      return prev === processes.length - 1 ? 0 : prev + 1;
-                    });
-                  }}
-                />
-                <X
-                  className="size-8 bg-slate-800 hover:bg-slate-700 text-red-400 rounded-md transition-all cursor-pointer p-1 hover:scale-[80%]"
-                  onClick={() => {
-                    setcurrentProcessIndex(null);
-                  }}
-                />
-              </div>
-            </header>
-            <div className="w-full h-100 overflow-auto">
-              <img
-                src={convertFileSrc(processes[currentProcessIndex].imagePath)}
-                alt={processes[currentProcessIndex].title}
-              />
-            </div>
-          </section>
-        </div>
+        <ArticlesView
+          process={processes[currentProcessIndex]}
+          processIndex={currentProcessIndex}
+          processesLength={processes.length}
+          changeProcess={handleChangeProcess}
+          closeView={closeView}
+          handleMarkProcess={onToggleMark}
+          isProcessMarked={isProcessMarked}
+        />
       )}
     </>
   );
