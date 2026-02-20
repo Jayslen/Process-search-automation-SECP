@@ -1,51 +1,20 @@
 import "./App.css";
-import { readTextFile } from "@tauri-apps/plugin-fs";
-import { invoke } from "@tauri-apps/api/core";
-import { useEffect, useState } from "react";
 import { Globe } from "lucide-react";
-import { BaseDirectory, appDataDir } from "@tauri-apps/api/path";
-import { ProcessData, ProcessDetails } from "./components/ProccessDetails";
+import { ProcessDetails } from "./components/ProccessDetails";
 import { Sidebar } from "./components/Sidebar";
 import { ScrapeDataForm } from "./components/Form";
-import data from "./mocks/data.json";
+import { useToggleMark } from "./hooks/useToggleMark";
+import { useGetProcess } from "./hooks/useGetProcess";
 
-const mockProcesses: ProcessData[] = data;
-
-console.log(await appDataDir());
 function App() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [processes, setProcesses] = useState<ProcessData[]>(mockProcesses);
-  const [markedProcessCodes, setMarkedProcessCodes] = useState<Set<string>>(
-    new Set(),
-  );
+  const { isLoading, processes } = useGetProcess();
+  const {
+    markedProcesses,
+    markedProcessCodes,
+    handleRemoveMark,
+    handleToggleMark,
+  } = useToggleMark(processes);
 
-  useEffect(() => {
-    setProcesses(mockProcesses);
-  }, []);
-
-  const handleToggleMark = (process: ProcessData) => {
-    setMarkedProcessCodes((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(process.code)) {
-        newSet.delete(process.code);
-      } else {
-        newSet.add(process.code);
-      }
-      return newSet;
-    });
-  };
-
-  const handleRemoveMark = (processCode: string) => {
-    setMarkedProcessCodes((prev) => {
-      const newSet = new Set(prev);
-      newSet.delete(processCode);
-      return newSet;
-    });
-  };
-
-  const markedProcesses = processes.filter((process) =>
-    markedProcessCodes.has(process.code),
-  );
   return (
     <>
       {/* Sidebar */}
