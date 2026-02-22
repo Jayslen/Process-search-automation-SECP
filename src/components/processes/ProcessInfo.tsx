@@ -7,6 +7,7 @@ import {
   Star,
 } from "lucide-react";
 import { ProcessData } from "../../types/core";
+import { formatDate } from "../../utils/formatDate";
 
 export function ProcessInfo({
   process,
@@ -22,9 +23,6 @@ export function ProcessInfo({
   showArticles: (process: ProcessData) => void;
 }) {
   const { institution, code, title, pubDate, dueDate } = process;
-  const getDate = (date: string | undefined) => {
-    return date ? new Date(date).toLocaleString() : "N/A";
-  };
   return (
     <li className="bg-slate-900 rounded-md border border-slate-700 hover:border-slate-600 hover:shadow-sm transition-all p-5 flex items-center gap-6">
       {/* Left Section - Main Info */}
@@ -47,14 +45,14 @@ export function ProcessInfo({
             <Calendar className="size-4 text-slate-500" />
             <span className="text-slate-400">Publicado:</span>
             <span className="text-slate-300 font-medium">
-              {getDate(pubDate)}
+              {formatDate(pubDate)}
             </span>
           </div>
           <div className="flex items-center gap-2">
             <Calendar className="size-4 text-red-400" />
             <span className="text-slate-400">Vencimiento:</span>
             <span className="text-slate-300 font-medium">
-              {getDate(dueDate)}
+              {formatDate(dueDate)}
             </span>
           </div>
         </footer>

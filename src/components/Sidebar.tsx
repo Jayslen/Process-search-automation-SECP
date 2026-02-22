@@ -1,5 +1,6 @@
 import { Bookmark, Star } from "lucide-react";
 import { ProcessData } from "../types/core";
+import { formatDate } from "../utils/formatDate";
 
 interface SidebarProps {
   markedProcesses: ProcessData[];
@@ -28,17 +29,17 @@ export function Sidebar({ markedProcesses, onRemoveMark }: SidebarProps) {
             </p>
           </div>
         ) : (
-          markedProcesses.map((process) => (
+          markedProcesses.map(({ code, title, institution, dueDate }) => (
             <li
-              key={process.code}
+              key={code}
               className="bg-slate-800 rounded-lg p-4 hover:bg-slate-750 transition-colors"
             >
               <header className="flex items-start justify-between gap-2 mb-2">
                 <h4 className="font-medium text-sm line-clamp-2 flex-1">
-                  {process.title}
+                  {title}
                 </h4>
                 <button
-                  onClick={() => onRemoveMark(process.code)}
+                  onClick={() => onRemoveMark(code)}
                   className="shrink-0 p-1 hover:bg-slate-700 rounded transition-colors"
                   title="Quitar marcador"
                 >
@@ -46,18 +47,16 @@ export function Sidebar({ markedProcesses, onRemoveMark }: SidebarProps) {
                 </button>
               </header>
 
-              <span className="text-xs text-slate-400 mb-2">
-                {process.institution}
-              </span>
+              <span className="text-xs text-slate-400 mb-2">{institution}</span>
 
               <div className="flex items-center gap-2 text-xs">
                 <span className="bg-slate-700 px-2 py-1 rounded font-mono">
-                  {process.code}
+                  {code}
                 </span>
               </div>
 
               <footer className="mt-2 pt-2 border-t border-slate-700 text-xs text-slate-400">
-                Vencimiento: {process.dueDate}
+                Vencimiento: {formatDate(dueDate)}
               </footer>
             </li>
           ))
