@@ -1,6 +1,7 @@
 import { ArrowLeft, ArrowRight, Star, X } from "lucide-react";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { Direction, ProcessData } from "../../types/core";
+import { useEffect } from "react";
 
 export function ArticlesView({
   process,
@@ -26,6 +27,28 @@ export function ArticlesView({
   const prevProcess = () => {
     changeProcess(Direction.Previous);
   };
+  const handleKeyDown = (e: KeyboardEvent) => {
+    const key = e.key;
+    console.log(key);
+    switch (key) {
+      case "ArrowRight":
+        nextProcess();
+        break;
+      case "ArrowLeft":
+        prevProcess();
+        break;
+      case "Escape":
+        closeView();
+        break;
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
   return (
     <div className="w-screen h-screen bg-black/80 absolute top-0 left-0 grid place-items-center">
       <section className="max-w-6xl  hover:shadow-sm transition-all">
