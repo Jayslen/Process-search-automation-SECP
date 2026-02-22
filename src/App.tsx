@@ -1,6 +1,6 @@
 import "./App.css";
 import { Globe } from "lucide-react";
-import { ProcessDetails } from "./components/ProccessDetails";
+import { ProcessDetails } from "./components/ProcessesDetails";
 import { Sidebar } from "./components/Sidebar";
 import { ScrapeDataForm } from "./components/Form";
 import { useToggleMark } from "./hooks/useToggleMark";

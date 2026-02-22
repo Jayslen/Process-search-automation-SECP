@@ -1,6 +1,6 @@
 import { ArrowLeft, ArrowRight, Star, X } from "lucide-react";
 import { convertFileSrc } from "@tauri-apps/api/core";
-import { Direction, ProcessData } from "../types/core";
+import { Direction, ProcessData } from "../../types/core";
 
 export function ArticlesView({
   process,
