@@ -13,16 +13,16 @@ type RowData = {
   imagePath: string;
 };
 
-const [userPath, username, password] = Bun.argv.slice(2);
+const [dataPath, username, password] = Bun.argv.slice(2);
 
-if (!userPath) {
-  console.error("User path is required");
+if (!dataPath || !username || !password) {
+  console.error("Some fields are missing");
   process.exit(1);
 }
 
-const dirPath = path.join(userPath);
-
-const credentialsFiles = Bun.file("./scraping-script/./.auth/credentials.json");
+const dirPath = path.join(dataPath);
+const credentialsPath = path.join(dataPath, "credentials.json");
+const credentialsFiles = Bun.file(credentialsPath);
 
 const proccessURL =
   "https://portal.comprasdominicana.gob.do/DO1BusinessLine/Tendering/ContractNoticeManagement/Index";
@@ -35,6 +35,8 @@ const context = await browser.newContext({
 const page = await context.newPage();
 await page.goto(proccessURL);
 
+// await page.waitForTimeout(10000);
+
 if (page.url().includes("logoff")) {
   await page.getByText("Inicio").click();
 }
@@ -44,9 +46,7 @@ if (page.url().includes("Login")) {
   await page.getByPlaceholder("Username").fill(username as string);
   await page.getByPlaceholder("Password").fill(password as string);
   await page.locator("id=ctl00_content__login_LoginButton").click();
-  await page
-    .context()
-    .storageState({ path: "./scraping-script/./.auth/credentials.json" });
+  await page.context().storageState({ path: credentialsPath });
   await page.goto(proccessURL);
 }
 
@@ -85,12 +85,12 @@ await mkdir(dirPath, { recursive: true });
 const processSuccessPath = path.join(dirPath, "process_results.json");
 
 const parsedRows = [];
-for (let i = 0; i < rows.length; i++) {
-  const row = rows[i];
-  if (!row) continue;
-  if (!row.url) continue;
+try {
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    if (!row) continue;
+    if (!row.url) continue;
 
-  try {
     await page.goto(row.url);
     const imagePath = path.join(dirPath, "images", `${row.code}.png`);
     await page
@@ -98,15 +98,14 @@ for (let i = 0; i < rows.length; i++) {
       .screenshot({ path: imagePath });
     row.imagePath = imagePath;
     parsedRows.push(row);
-  } catch (error) {
-    // row.imagePath = "";
-    //handles errors: TODO
-  } finally {
+
     row.pubDate = parseDate(row.pubDate);
     row.dueDate = parseDate(row.dueDate);
   }
+  await Bun.write(processSuccessPath, JSON.stringify(parsedRows));
+  console.log(`Process saved at: ${dirPath}`);
+} catch (error) {
+  console.error("Error processing rows:", error);
 }
 
-await Bun.write(processSuccessPath, JSON.stringify(parsedRows));
-console.log(`Process saved at: ${dirPath}`);
 await browser.close();

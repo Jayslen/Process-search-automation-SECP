@@ -7,7 +7,7 @@ import { useToggleMark } from "./hooks/useToggleMark";
 import { useGetProcess } from "./hooks/useGetProcess";
 
 function App() {
-  const { isLoading, processes } = useGetProcess();
+  const { isLoading, processes, fetchProcess } = useGetProcess();
   const {
     markedProcesses,
     markedProcessCodes,
@@ -43,12 +43,7 @@ function App() {
             </div>
           </header>
           {/* Login Form */}
-          <ScrapeDataForm
-            onSubmit={() => {
-              console.log("Scraping started");
-            }}
-            isLoading={isLoading}
-          />
+          <ScrapeDataForm onSubmit={fetchProcess} isLoading={isLoading} />
           Process Details
           <ProcessDetails
             processes={processes}

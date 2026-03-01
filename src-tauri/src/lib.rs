@@ -1,5 +1,5 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-use std::process::{Command, Stdio};
+use std::process::Command;
 
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -7,23 +7,27 @@ fn greet(name: &str) -> String {
 }
 
 #[tauri::command]
-fn scrape(path: &str) -> Result<String, String> {
-    let output = Command::new("bun")
-        .current_dir("/home/jayslen/Development/SECP-scrape-bidding-processes")
+fn scrape(path: &str, username: &str, password: &str) -> Result<String, String> {
+    let output = Command::new("/home/jayslen/Development/automation-SECP/src/bin/bun")
+        .current_dir("/home/jayslen/Development/automation-SECP/src/scripts")
         .arg("run")
-        .arg("index.ts")
+        .arg("scraping.ts")
         .arg(path)
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .output()
-        .map_err(|e| e.to_string())?;
+        .arg(username)
+        .arg(password)
+        .output();
 
-    if output.status.success() {
-        let stdout = String::from_utf8_lossy(&output.stdout).to_string();
-        Ok(stdout)
-    } else {
-        let stderr = String::from_utf8_lossy(&output.stderr).to_string();
-        Err(stderr)
+    match output {
+        Ok(output) => {
+            if output.status.success() {
+                let stdout = String::from_utf8_lossy(&output.stdout).to_string();
+                Ok(stdout)
+            } else {
+                let stderr = String::from_utf8_lossy(&output.stderr).to_string();
+                Err(stderr)
+            }
+        }
+        Err(e) => Err(format!("Failed to execute scrape: {}", e)),
     }
 }
 

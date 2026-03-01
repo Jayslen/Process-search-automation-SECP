@@ -1,7 +1,13 @@
 import { Key, User, LogIn } from "lucide-react";
 
 interface LoginFormProps {
-  onSubmit: (username: string, password: string) => void;
+  onSubmit: ({
+    username,
+    password,
+  }: {
+    username: string;
+    password: string;
+  }) => void;
   isLoading?: boolean;
 }
 
@@ -9,9 +15,11 @@ export function ScrapeDataForm({
   onSubmit,
   isLoading = false,
 }: LoginFormProps) {
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.SubmitEvent) => {
     e.preventDefault();
-    onSubmit("username", "password");
+    const data = Object.fromEntries(new FormData(e.target).entries());
+
+    onSubmit({ username: data.username, password: data.password });
   };
 
   return (
@@ -32,6 +40,7 @@ export function ScrapeDataForm({
             <User className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-slate-500" />
             <input
               type="text"
+              name="username"
               id="username"
               className="w-full pl-8 pr-3 py-1.5 text-sm border border-slate-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-slate-800 text-slate-100 placeholder:text-slate-500"
               placeholder="Usuario"
@@ -52,6 +61,7 @@ export function ScrapeDataForm({
             <input
               type="password"
               id="password"
+              name="password"
               className="w-full pl-8 pr-3 py-1.5 text-sm border border-slate-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-slate-800 text-slate-100 placeholder:text-slate-500"
               placeholder="Contraseña"
               required
