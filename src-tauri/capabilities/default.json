@@ -8,14 +8,6 @@
     "core:default",
     "opener:default",
     "fs:default",
-    {
-      "identifier": "fs:allow-read-text-file",
-      "allow": [{ "path": "$APPDATA/process_results.json" }]
-    },
-    {
-      "identifier": "fs:allow-write-text-file",
-      "allow": [{ "path": "$HOME/config.json" }]
-    },
-    "fs:allow-write-text-file"
+    "fs:allow-app-read-recursive"
   ]
 }

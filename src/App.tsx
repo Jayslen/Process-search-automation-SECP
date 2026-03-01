@@ -5,6 +5,7 @@ import { Sidebar } from "./components/Sidebar";
 import { ScrapeDataForm } from "./components/Form";
 import { useToggleMark } from "./hooks/useToggleMark";
 import { useGetProcess } from "./hooks/useGetProcess";
+import { LoadingComponent } from "./components/LoadingComponent";
 
 function App() {
   const { isLoading, processes, fetchProcess } = useGetProcess();
@@ -25,6 +26,7 @@ function App() {
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto">
+        {isLoading && <LoadingComponent />}
         <div className="max-w-7xl mx-auto p-8">
           {/* Header */}
           <header className="flex items-center gap-3 mb-8">
@@ -43,7 +45,7 @@ function App() {
             </div>
           </header>
           {/* Login Form */}
-          <ScrapeDataForm onSubmit={fetchProcess} isLoading={isLoading} />
+          <ScrapeDataForm onSubmit={fetchProcess} />
           Process Details
           <ProcessDetails
             processes={processes}

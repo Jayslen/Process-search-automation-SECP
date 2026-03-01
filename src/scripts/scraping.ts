@@ -26,7 +26,15 @@ const credentialsFiles = Bun.file(credentialsPath);
 
 const proccessURL =
   "https://portal.comprasdominicana.gob.do/DO1BusinessLine/Tendering/ContractNoticeManagement/Index";
-const browser = await chromium.launch({ headless: false });
+const browser = await chromium.launch({
+  headless: true,
+  args: [
+    "--disable-gpu",
+    "--disable-dev-shm-usage",
+    "--no-sandbox",
+    "--disable-setuid-sandbox",
+  ],
+});
 const context = await browser.newContext({
   storageState: await credentialsFiles.json(),
   viewport: { width: 1920, height: 1080 },
@@ -34,6 +42,8 @@ const context = await browser.newContext({
 
 const page = await context.newPage();
 await page.goto(proccessURL);
+
+console.log("Page loaded:", page.url());
 
 // await page.waitForTimeout(10000);
 
@@ -90,6 +100,7 @@ try {
     const row = rows[i];
     if (!row) continue;
     if (!row.url) continue;
+    console.log(`Processing row ${i + 1}/${rows.length}: ${row.code}`);
 
     await page.goto(row.url);
     const imagePath = path.join(dirPath, "images", `${row.code}.png`);

@@ -8,13 +8,9 @@ interface LoginFormProps {
     username: string;
     password: string;
   }) => void;
-  isLoading?: boolean;
 }
 
-export function ScrapeDataForm({
-  onSubmit,
-  isLoading = false,
-}: LoginFormProps) {
+export function ScrapeDataForm({ onSubmit }: LoginFormProps) {
   const handleSubmit = (e: React.SubmitEvent) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(e.target).entries());
@@ -71,10 +67,9 @@ export function ScrapeDataForm({
 
         <button
           type="submit"
-          disabled={isLoading}
           className="bg-blue-500 hover:bg-blue-600 text-white py-1.5 px-5 rounded-md font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
         >
-          {isLoading ? "Conectando..." : "Iniciar"}
+          Iniciar
         </button>
       </form>
     </div>
