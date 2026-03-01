@@ -44,14 +44,14 @@ export function ProcessInfo({
           <div className="flex items-center gap-2">
             <Calendar className="size-4 text-slate-500" />
             <span className="text-slate-400">Publicado:</span>
-            <span className="text-slate-300 font-medium">
+            <span className="text-slate-300 font-medium capitalize">
               {formatDate(pubDate)}
             </span>
           </div>
           <div className="flex items-center gap-2">
             <Calendar className="size-4 text-red-400" />
             <span className="text-slate-400">Vencimiento:</span>
-            <span className="text-slate-300 font-medium">
+            <span className="text-slate-300 font-medium capitalize">
               {formatDate(dueDate)}
             </span>
           </div>
