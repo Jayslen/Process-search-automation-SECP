@@ -1,5 +1,5 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-// use std::process::Command;
+use tauri::{AppHandle, Manager};
 use tokio::process::Command;
 
 #[tauri::command]
@@ -8,11 +8,25 @@ fn greet(name: &str) -> String {
 }
 
 #[tauri::command]
-async fn scrape(path: String, username: String, password: String) -> Result<String, String> {
-    let output = Command::new("/home/jayslen/Development/automation-SECP/src/bin/bun")
-        .current_dir("/home/jayslen/Development/automation-SECP/src/scripts")
+async fn scrape(
+    app: AppHandle,
+    path: String,
+    username: String,
+    password: String,
+) -> Result<String, String> {
+    let bun_path = app
+        .path()
+        .resolve("utils/bun", tauri::path::BaseDirectory::Resource)
+        .expect("Bun binary not found");
+
+    let script_path = app
+        .path()
+        .resolve("utils/scraping.ts", tauri::path::BaseDirectory::Resource)
+        .expect("Scraping script not found");
+
+    let output = Command::new(bun_path)
         .arg("run")
-        .arg("scraping.ts")
+        .arg(script_path)
         .arg(path)
         .arg(username)
         .arg(password)

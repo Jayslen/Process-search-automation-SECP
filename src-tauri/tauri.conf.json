@@ -29,6 +29,7 @@
     }
   },
   "bundle": {
+    "resources": ["utils/*"],
     "active": true,
     "targets": "all",
     "icon": [
