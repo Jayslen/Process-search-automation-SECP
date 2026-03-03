@@ -39,14 +39,18 @@ export function useGetProcess() {
     setIsLoading(true);
 
     const path = await appDataDir();
-    console.log("Comenzando proceso de scraping...");
     try {
-      await invoke("scrape", {
+      const result = await invoke("scrape", {
         path,
         username,
         password,
       });
-      await getProcess();
+      const data = JSON.parse(result as string) as ProcessData[];
+      if (data.length > 0) {
+        setProcesses((prev) => [...prev, ...data]);
+      } else {
+        console.log("No new processes found.");
+      }
     } catch (error) {
       console.error("Error fetching processes:", error);
     } finally {

@@ -1,5 +1,4 @@
 import { chromium } from "playwright";
-import { mkdir } from "fs/promises";
 import path from "path";
 
 type RowData = {
@@ -41,10 +40,6 @@ const context = await browser.newContext({
 
 const page = await context.newPage();
 await page.goto(proccessURL);
-
-console.log("Page loaded:", page.url());
-
-// await page.waitForTimeout(10000);
 
 if (page.url().includes("logoff")) {
   await page.getByText("Inicio").click();
@@ -90,16 +85,19 @@ const rows: RowData[] = await page.$$eval(
     }, []),
 );
 
-await mkdir(dirPath, { recursive: true });
 const processSuccessPath = path.join(dirPath, "process_results.json");
+const processFileExist = await Bun.file(processSuccessPath).exists();
 
+const existingData: RowData[] = processFileExist
+  ? await Bun.file(processSuccessPath).json()
+  : [];
 const parsedRows = [];
 try {
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
     if (!row) continue;
     if (!row.url) continue;
-    console.log(`Processing row ${i + 1}/${rows.length}: ${row.code}`);
+    if (existingData.some((item) => item.code === row.code)) continue;
 
     await page.goto(row.url);
     const imagePath = path.join(dirPath, "images", `${row.code}.png`);
@@ -112,8 +110,11 @@ try {
     row.pubDate = parseDate(row.pubDate);
     row.dueDate = parseDate(row.dueDate);
   }
-  await Bun.write(processSuccessPath, JSON.stringify(parsedRows));
-  console.log(`Process saved at: ${dirPath}`);
+  await Bun.write(
+    processSuccessPath,
+    JSON.stringify([parsedRows, ...existingData].flat(), null, 2),
+  );
+  console.log(JSON.stringify(parsedRows, null, 2));
 } catch (error) {
   console.error("Error processing rows:", error);
 }
