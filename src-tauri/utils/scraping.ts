@@ -14,13 +14,15 @@ type RowData = {
 const [dataPath, username, password] = Bun.argv.slice(2);
 
 if (!dataPath || !username || !password) {
-  console.error("Some fields are missing");
+  console.error("Complete todos los campos.");
   process.exit(1);
 }
 
 const dirPath = path.join(dataPath);
 const credentialsPath = path.join(dataPath, "credentials.json");
-const credentialsFiles = Bun.file(credentialsPath);
+const credentialsFile = (await Bun.file(credentialsPath).exists())
+  ? Bun.file(credentialsPath).json()
+  : [];
 
 const proccessURL =
   "https://portal.comprasdominicana.gob.do/DO1BusinessLine/Tendering/ContractNoticeManagement/Index";
@@ -34,7 +36,7 @@ const browser = await chromium.launch({
   ],
 });
 const context = await browser.newContext({
-  storageState: await credentialsFiles.json(),
+  storageState: await credentialsFile,
   viewport: { width: 1920, height: 1080 },
 });
 
@@ -50,6 +52,15 @@ if (page.url().includes("Login")) {
   await page.getByPlaceholder("Username").fill(username as string);
   await page.getByPlaceholder("Password").fill(password as string);
   await page.locator("id=ctl00_content__login_LoginButton").click();
+
+  await page.waitForSelector(".error-text").then(() => {
+    console.error(
+      "Las credenciales son incorrectas. Por favor, verifica tu usuario y contraseña.",
+    );
+    browser.close();
+    process.exit(1);
+  });
+
   await page.context().storageState({ path: credentialsPath });
   await page.goto(proccessURL);
 }
@@ -116,7 +127,7 @@ try {
   );
   console.log(JSON.stringify(parsedRows, null, 2));
 } catch (error) {
-  console.error("Error processing rows:", error);
+  console.error("Error al procesar datos");
 }
 
 await browser.close();

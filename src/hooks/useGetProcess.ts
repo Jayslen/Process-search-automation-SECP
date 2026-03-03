@@ -5,6 +5,11 @@ import { invoke } from "@tauri-apps/api/core";
 import { ProcessData } from "../types/core";
 import toast from "react-hot-toast";
 
+const ERRORS: string[] = [
+  "Complete todos los campos.",
+  "Las credenciales son incorrectas. Por favor, verifica tu usuario y contraseña.",
+  "Error al procesar datos",
+];
 export function useGetProcess() {
   const [isLoading, setIsLoading] = useState(false);
   const [processes, setProcesses] = useState<ProcessData[]>([]);
@@ -55,8 +60,11 @@ export function useGetProcess() {
       }
     } catch (error) {
       console.error("Error fetching processes:", error);
+      if (ERRORS.includes(error as string)) {
+        toast.error(error as string);
+      }
       toast.error(
-        "Ocurrió un error al obtener los procesos. Inténtalo de nuevo.",
+        "Ha ocurrido un error al obtener los procesos. Por favor, intenta nuevamente.",
       );
     } finally {
       setIsLoading(false);

@@ -61,6 +61,7 @@ function App() {
             backgroundColor: "#0f172b",
             color: "#e0e0e0",
             border: "1px solid #334155",
+            fontSize: "14px",
           },
           position: "top-right",
         }}
