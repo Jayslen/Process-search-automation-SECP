@@ -6,6 +6,7 @@ import { ScrapeDataForm } from "./components/Form";
 import { useToggleMark } from "./hooks/useToggleMark";
 import { useGetProcess } from "./hooks/useGetProcess";
 import { LoadingComponent } from "./components/LoadingComponent";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   const { isLoading, processes, fetchProcess } = useGetProcess();
@@ -54,6 +55,16 @@ function App() {
           />
         </div>
       </main>
+      <Toaster
+        toastOptions={{
+          style: {
+            backgroundColor: "#0f172b",
+            color: "#e0e0e0",
+            border: "1px solid #334155",
+          },
+          position: "top-right",
+        }}
+      />
     </>
   );
 }

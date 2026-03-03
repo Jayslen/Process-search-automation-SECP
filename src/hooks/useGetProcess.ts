@@ -3,6 +3,7 @@ import { appDataDir, BaseDirectory } from "@tauri-apps/api/path";
 import { readTextFile, exists } from "@tauri-apps/plugin-fs";
 import { invoke } from "@tauri-apps/api/core";
 import { ProcessData } from "../types/core";
+import toast from "react-hot-toast";
 
 export function useGetProcess() {
   const [isLoading, setIsLoading] = useState(false);
@@ -47,12 +48,16 @@ export function useGetProcess() {
       });
       const data = JSON.parse(result as string) as ProcessData[];
       if (data.length > 0) {
+        toast.success(`Se han encontrado ${data.length} nuevos procesos.`);
         setProcesses((prev) => [...prev, ...data]);
       } else {
-        console.log("No new processes found.");
+        toast("No se encontraron nuevos procesos.");
       }
     } catch (error) {
       console.error("Error fetching processes:", error);
+      toast.error(
+        "Ocurrió un error al obtener los procesos. Inténtalo de nuevo.",
+      );
     } finally {
       setIsLoading(false);
     }
