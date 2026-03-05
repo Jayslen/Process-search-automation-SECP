@@ -13,6 +13,7 @@ export interface ProcessDetailsProps {
   processes: ProcessData[];
   markedProcesses: Set<string>;
   onToggleMark: (process: ProcessData) => void;
+  onSearch: (keyword: string) => void;
 }
 
 export enum Direction {

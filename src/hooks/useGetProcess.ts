@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { appDataDir, BaseDirectory } from "@tauri-apps/api/path";
 import { readTextFile, exists } from "@tauri-apps/plugin-fs";
 import { invoke } from "@tauri-apps/api/core";
@@ -13,6 +13,11 @@ const ERRORS: string[] = [
 export function useGetProcess() {
   const [isLoading, setIsLoading] = useState(false);
   const [processes, setProcesses] = useState<ProcessData[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    getProcess();
+  }, []);
 
   const getProcess = async () => {
     const fileExits = await exists("process_results.json", {
@@ -30,10 +35,6 @@ export function useGetProcess() {
 
     setProcesses(data);
   };
-
-  useEffect(() => {
-    getProcess();
-  });
 
   const fetchProcess = async ({
     username,
@@ -70,5 +71,16 @@ export function useGetProcess() {
       setIsLoading(false);
     }
   };
-  return { isLoading, processes, fetchProcess };
+
+  const filteredProcesses = useMemo(() => {
+    return processes.filter((process) =>
+      process.title.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
+  }, [processes, searchQuery]);
+
+  const onSearch = (keyword: string) => {
+    setSearchQuery(keyword);
+  };
+
+  return { isLoading, processes, fetchProcess, filteredProcesses, onSearch };
 }

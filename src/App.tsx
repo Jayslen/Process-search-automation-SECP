@@ -9,7 +9,8 @@ import { LoadingComponent } from "./components/LoadingComponent";
 import { Toaster } from "react-hot-toast";
 
 function App() {
-  const { isLoading, processes, fetchProcess } = useGetProcess();
+  const { isLoading, filteredProcesses, processes, fetchProcess, onSearch } =
+    useGetProcess();
   const {
     markedProcesses,
     markedProcessCodes,
@@ -47,11 +48,12 @@ function App() {
           </header>
           {/* Login Form */}
           <ScrapeDataForm onSubmit={fetchProcess} />
-          Process Details
+          Procesos
           <ProcessDetails
-            processes={processes}
+            processes={filteredProcesses}
             markedProcesses={markedProcessCodes}
             onToggleMark={handleToggleMark}
+            onSearch={onSearch}
           />
         </div>
       </main>
