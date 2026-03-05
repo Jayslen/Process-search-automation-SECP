@@ -9,6 +9,7 @@ type RowData = {
   dueDate: string | undefined;
   url: string;
   imagePath: string;
+  timestamp?: Date;
 };
 
 const [dataPath, username, password] = Bun.argv.slice(2);
@@ -53,13 +54,23 @@ if (page.url().includes("Login")) {
   await page.getByPlaceholder("Password").fill(password as string);
   await page.locator("id=ctl00_content__login_LoginButton").click();
 
-  await page.waitForSelector(".error-text").then(() => {
+  const locator = page.locator(".error-text");
+
+  if ((await locator.count()) > 0) {
     console.error(
       "Las credenciales son incorrectas. Por favor, verifica tu usuario y contraseña.",
     );
-    browser.close();
+    await browser.close();
     process.exit(1);
-  });
+  }
+
+  // await page.waitForSelector(".error-text").then(() => {
+  //   console.error(
+  //     "Las credenciales son incorrectas. Por favor, verifica tu usuario y contraseña.",
+  //   );
+  //   browser.close();
+  //   process.exit(1);
+  // });
 
   await page.context().storageState({ path: credentialsPath });
   await page.goto(proccessURL);
@@ -67,6 +78,7 @@ if (page.url().includes("Login")) {
 
 const rows: RowData[] = await page.$$eval(
   "[id=tblMainTable_trRowMiddle_tdCell1_tblForm_trGridRow_tdCell1_grdResultList_tbl] > tbody  > tr",
+
   (rows) =>
     rows.reduce<RowData[]>((acc, row, i, arr) => {
       if (i === 0 || i === arr.length - 1) return acc;
@@ -98,6 +110,7 @@ const rows: RowData[] = await page.$$eval(
 
 const processSuccessPath = path.join(dirPath, "process_results.json");
 const processFileExist = await Bun.file(processSuccessPath).exists();
+const timestamp = new Date();
 
 const existingData: RowData[] = processFileExist
   ? await Bun.file(processSuccessPath).json()
@@ -120,6 +133,7 @@ try {
 
     row.pubDate = parseDate(row.pubDate);
     row.dueDate = parseDate(row.dueDate);
+    row.timestamp = timestamp;
   }
   await Bun.write(
     processSuccessPath,

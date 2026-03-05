@@ -6,6 +6,7 @@ export interface ProcessData {
   dueDate: string | undefined;
   url: string;
   imagePath: string;
+  timestamp?: Date;
 }
 
 export interface ProcessDetailsProps {

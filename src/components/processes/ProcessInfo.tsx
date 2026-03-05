@@ -22,9 +22,21 @@ export function ProcessInfo({
   isProcessMarked: (process: ProcessData) => boolean;
   showArticles: (process: ProcessData) => void;
 }) {
-  const { institution, code, title, pubDate, dueDate } = process;
+  const { institution, code, title, pubDate, dueDate, timestamp } = process;
+
+  const diffInMinutes = timestamp
+    ? Math.floor((Date.now() - new Date(timestamp).getTime()) / 60000)
+    : null;
+
+  const isNew = diffInMinutes !== null && diffInMinutes <= 30; // Consider as "Nuevo" if published within the last 30 mins
+
   return (
-    <li className="bg-slate-900 rounded-md border border-slate-700 hover:border-slate-600 hover:shadow-sm transition-all p-5 flex items-center gap-6">
+    <li className="bg-slate-900 rounded-md border border-slate-700 hover:border-slate-600 hover:shadow-sm transition-all p-5 flex items-center gap-6 relative">
+      {isNew && (
+        <p className="absolute -top-2 -left-2  text-yellow-400 text-xs font-bold px-2 py-1 rounded -rotate-6 bg-yellow-900/30">
+          Nuevo
+        </p>
+      )}
       {/* Left Section - Main Info */}
       <section className="flex-1 min-w-0">
         <header className="flex gap-4 mb-2">
